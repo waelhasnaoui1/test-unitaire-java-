@@ -3,10 +3,7 @@ package com.alibou.demo.subject.impl;
 import com.alibou.demo.student.Student;
 import com.alibou.demo.student.StudentMapper;
 import com.alibou.demo.student.StudentRepository;
-import com.alibou.demo.subject.Subject;
-import com.alibou.demo.subject.SubjectMapper;
-import com.alibou.demo.subject.SubjectRepository;
-import com.alibou.demo.subject.SubjectRequest;
+import com.alibou.demo.subject.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -88,6 +86,77 @@ class SubjectServiceImplTest2 {
 
         Mockito.verify(subjectRepository,Mockito.times(1)).save(subject);
 
+
+    }
+
+    @Test
+    void find_by_id_subject(){
+        int subjectId= 1;
+
+        Subject subject = new Subject();
+        subject.setId(1);
+        subject.setName("Math");
+
+        Mockito.when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
+
+        SubjectResponse subjectResponse = new SubjectResponse();
+        subjectResponse.setName("Math");
+
+        Mockito.when(mapper.toSubjectResponse(subject)).thenReturn(subjectResponse);
+
+        SubjectResponse response = subjectService.findById(subjectId);
+
+        Mockito.verify(subjectRepository,Mockito.times(1)).findById(subjectId);
+
+        assertEquals(subjectResponse,response);
+
+    }
+
+    @Test
+    void find_subject_by_id_throw_an_error (){
+
+    }
+
+    @Test
+    void findAll(){
+        List<Subject> subjects = new ArrayList<>();
+
+        Subject subject1 = Subject.builder().id(1).name("Math").build();
+        Subject subject2 = Subject.builder().id(2).name("Phy").build();
+
+        subjects.add(subject1);
+        subjects.add(subject2);
+
+        List<SubjectResponse> subjectsResponse = new ArrayList<>();
+
+        SubjectResponse subject1Response = SubjectResponse.builder().name("Math").build();
+        SubjectResponse subject2Response = SubjectResponse.builder().name("Phy").build();
+
+        subjectsResponse.add(subject1Response);
+        subjectsResponse.add(subject2Response);
+
+        Mockito.when(mapper.toSubjectResponse(subject1)).thenReturn(subject1Response);
+        Mockito.when(mapper.toSubjectResponse(subject2)).thenReturn(subject2Response);
+
+        Mockito.when(subjectRepository.findAll()).thenReturn(subjects);
+
+        var response = subjectService.findAll();
+
+        Mockito.verify(subjectRepository,Mockito.times(1)).findAll();
+
+        assertEquals(subjectsResponse,response);
+
+
+
+    }
+
+    @Test
+    void deleteById() {
+        int subjectId = 1;
+
+        subjectRepository.deleteById(subjectId);
+
+        Mockito.verify(subjectRepository,Mockito.times(1)).deleteById(subjectId);
 
     }
 
