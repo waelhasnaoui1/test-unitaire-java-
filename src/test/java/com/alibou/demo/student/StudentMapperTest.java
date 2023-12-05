@@ -15,6 +15,7 @@ class StudentMapperTest {
 
 
         Student student = new Student();
+        
         student.setFirstname("wael");
         student.setLastname("hasnaoui");
         student.setAge(25);
